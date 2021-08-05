@@ -36,37 +36,34 @@ namespace RestaurantApi.Controllers
         public ActionResult<IEnumerable<RestaurantDataModel>> Get()
         {
             
-            Logger1.LogWarning("LOGGER WARNING");
-            throw new Exception();
+          
+          
             
             var restaurants = mRestaurantRepository.GetRestaurantsInclude();
             
-            if (restaurants != null)
-            {
+            
                 return Ok(restaurants);
-            }
+            
 
-            return NotFound();
+           
         }
         [HttpGet("{id}")]
         public ActionResult<RestaurantDataModel> Get([FromRoute] int id)
         {
             var restaurant = mRestaurantRepository.GetRestaurantById(id);
-            if (restaurant != null)
-            {
+            
                 return Ok(restaurant);
-            }
-            return NotFound();
+            
 
         }
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            if (mRestaurantRepository.DeleteRestaurant(id))
-            {
-                return Ok();
-            }
-            return NotFound();
+            mRestaurantRepository.DeleteRestaurant(id);
+           
+               return Ok();
+            
+           
 
         }
         [HttpPost]
@@ -78,12 +75,10 @@ namespace RestaurantApi.Controllers
         [HttpPatch("{id}")]
         public ActionResult UpdateRestaurant([FromRoute] int id, [FromBody] CreateRestaurantDataModel createRestaurantData)
         {
-           bool result = mRestaurantRepository.UpdateRestaurantById(createRestaurantData, id);
-            if (result)
-            {
+           mRestaurantRepository.UpdateRestaurantById(createRestaurantData, id);
+            
                 return Ok();
-            }
-            return NotFound();
+          
         
         }
 

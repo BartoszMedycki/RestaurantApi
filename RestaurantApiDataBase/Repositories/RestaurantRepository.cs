@@ -30,16 +30,22 @@ namespace RestaurantApiDataBase.Repositories
 
         public IEnumerable<DataModels.RestaurantDataModel> GetRestaurantsInclude()
         {
+          
             
-            Logger.LogTrace("RestaurantRepository LogTrace");
             var tmpDbSet = dbContext.Restaurants.Include(x => x.Adress).Include(y => y.Dishes).ToList();
-            var mappedListOfRestaurants = RestaurantMapper.Map(tmpDbSet);
-            List<DataModels.RestaurantDataModel> IncludeRestaurantsList = new List<DataModels.RestaurantDataModel>();
-            foreach (var restaurant in mappedListOfRestaurants)
+            if (tmpDbSet != null)
             {
-                IncludeRestaurantsList.Add(restaurant);
+                var mappedListOfRestaurants = RestaurantMapper.Map(tmpDbSet);
+                List<DataModels.RestaurantDataModel> IncludeRestaurantsList = new List<DataModels.RestaurantDataModel>();
+                foreach (var restaurant in mappedListOfRestaurants)
+                {
+                    IncludeRestaurantsList.Add(restaurant);
+                }
+                return IncludeRestaurantsList;
             }
-            return IncludeRestaurantsList;
+
+            else
+                throw new NotFoundException("Not Found Restaurants");
 
 
         }
@@ -47,20 +53,31 @@ namespace RestaurantApiDataBase.Repositories
         {
             var restaurantsByName = dbContext.Restaurants.Include(x => x.Adress).Include(y => y.Dishes)
                 .Where(restaurantName => restaurantName.Name == name).ToList();
-            var restaurantsDataModel = RestaurantMapper.Map(restaurantsByName);
-            List<DataModels.RestaurantDataModel> IncludeRestaurantsList = new List<DataModels.RestaurantDataModel>();
-            foreach (var restaurant in restaurantsDataModel)
+            if (restaurantsByName != null)
             {
-                IncludeRestaurantsList.Add(restaurant);
+                var restaurantsDataModel = RestaurantMapper.Map(restaurantsByName);
+                List<DataModels.RestaurantDataModel> IncludeRestaurantsList = new List<DataModels.RestaurantDataModel>();
+                foreach (var restaurant in restaurantsDataModel)
+                {
+                    IncludeRestaurantsList.Add(restaurant);
+                }
+                return IncludeRestaurantsList;
             }
-            return IncludeRestaurantsList;
+            else throw new NotFoundException("Not found restaurant");
+          
         }
         public  DataModels.RestaurantDataModel GetRestaurantById(int id)
         {
+            System.Threading.Thread.Sleep(4000);
             var restaurantById = dbContext.Restaurants.Include(x => x.Adress).Include(s => s.Dishes)
                 .Where(RestaurantId => RestaurantId.Id == id).FirstOrDefault();
-            var restaurantDataModel = RestaurantMapper.Map(restaurantById);
-            return restaurantDataModel;
+            if (restaurantById != null)
+            {
+                var restaurantDataModel = RestaurantMapper.Map(restaurantById);
+                return restaurantDataModel;
+            }
+            else throw new NotFoundException("Not found restaurant");
+         
         }
         public int AddRestaurant(DataModels.CreateRestaurantDataModel restaurant)
         {
@@ -71,20 +88,20 @@ namespace RestaurantApiDataBase.Repositories
             return mappedRestaurant.Id;
             
         }
-        public bool DeleteRestaurant(int id)
+        public void DeleteRestaurant(int id)
         {
             var restaurant = dbContext.Restaurants.Where(restaurantId => restaurantId.Id == id).FirstOrDefault();
             if (restaurant != null)
             {
                 dbContext.Restaurants.Remove(restaurant);
                 this.SaveChanges();
-                return true;
-                
+
+
             }
-            return false;
+            else throw new NotFoundException("Restaurant not found"); 
           
         }
-        public bool UpdateRestaurantById(DataModels.CreateRestaurantDataModel createRestaurantData, int id)
+        public void UpdateRestaurantById(DataModels.CreateRestaurantDataModel createRestaurantData, int id)
          {
             var restaurant = dbContext.Restaurants.Include(x=>x.Adress).Include(s=>s.Dishes).Where(restaurantId => restaurantId.Id == id).FirstOrDefault();
             if (restaurant != null)
@@ -94,11 +111,11 @@ namespace RestaurantApiDataBase.Repositories
                 restaurant.Dishes = updateRestaurant.Dishes;
                 restaurant.Description = updateRestaurant.Description;
                 restaurant.Name = updateRestaurant.Name;
-                
+
                 this.SaveChanges();
-                return true;
+
             }
-            return false;
+            else throw new NotFoundException("Restaurant not found");
         }
         public void Seed()
         {
