@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using RestaurantApiDataBase.Mappers;
 using RestaurantApiDataBase;
 using RestaurantApiDataBase.DataModels;
+using RestaurantApiDataBase.Exceptions;
 
 namespace RestaurantApi.Controllers
 {
@@ -34,8 +35,12 @@ namespace RestaurantApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<RestaurantDataModel>> Get()
         {
+            
             Logger1.LogWarning("LOGGER WARNING");
+            throw new Exception();
+            
             var restaurants = mRestaurantRepository.GetRestaurantsInclude();
+            
             if (restaurants != null)
             {
                 return Ok(restaurants);

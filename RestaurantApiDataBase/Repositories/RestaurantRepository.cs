@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RestaurantApiDataBase.Exceptions;
 using RestaurantApiDataBase.Interfaces;
 using RestaurantApiDataBase.Mappers;
 using System;
@@ -29,7 +30,8 @@ namespace RestaurantApiDataBase.Repositories
 
         public IEnumerable<DataModels.RestaurantDataModel> GetRestaurantsInclude()
         {
-            Logger.LogTrace("Restaurant SAJIGSAIGJSAIG");
+            
+            Logger.LogTrace("RestaurantRepository LogTrace");
             var tmpDbSet = dbContext.Restaurants.Include(x => x.Adress).Include(y => y.Dishes).ToList();
             var mappedListOfRestaurants = RestaurantMapper.Map(tmpDbSet);
             List<DataModels.RestaurantDataModel> IncludeRestaurantsList = new List<DataModels.RestaurantDataModel>();
